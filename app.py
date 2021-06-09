@@ -1,8 +1,12 @@
 from flask import Flask, render_template, redirect , url_for
 from flask_bootstrap import Bootstrap
+import requests
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
+from flask import request
+from flask_cors import CORS,cross_origin
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -13,6 +17,7 @@ file_path = os.path.abspath(os.getcwd())+"\database.db"
 app = Flask(__name__)
 app.config['SECRET_KEY']='Thisissecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+file_path
+cors = CORS(app)
 Bootstrap(app)
 db=SQLAlchemy(app)
 
@@ -85,6 +90,20 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route('/test_subject' , methods=['POST'])
+@cross_origin()
+def test_subject():
+    data=request.get_json()
+    print(data)
+
+    bp=int(data["Blood_Pressure"])
+    weight=int(data["weight"])
+   
+    result = bp + weight
+    print(result)
+    return jsonify({'result': result})
+    # return jsonify(message="POST request returned")
 
 
 if __name__ == '__main__':
