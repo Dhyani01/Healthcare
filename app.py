@@ -11,6 +11,16 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import pickle
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import numpy as np
+from matplotlib import pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+import sklearn
+import os
+import joblib
 
 
 file_path = os.path.abspath(os.getcwd())+"\database.db"
@@ -91,19 +101,34 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/test_subject' , methods=['POST'])
-@cross_origin()
-def test_subject():
-    data=request.get_json()
-    print(data)
 
-    bp=int(data["Blood_Pressure"])
-    weight=int(data["weight"])
-   
-    result = bp + weight
-    print(result)
-    return jsonify({'result': result})
-    # return jsonify(message="POST request returned")
+@app.route('/cardio' , methods=['POST'])
+@cross_origin()
+def cardio():
+    data=request.get_json()
+    
+    pkl_model =joblib.load("Cardio.pkl")
+    x = pd.DataFrame(data,index=[0])    
+    # print(x.dtypes)
+    x.astype('int')
+    x = x.apply(pd.to_numeric)
+    x["bmi"] = x["weight"]/((x["height"]/100)**2)
+    x["bmi"].astype('float')
+    print(x.head())
+    a = x[x["gender"]==1]["height"].mean()
+    b = x[x["gender"]==2]["height"].mean()
+    if a > b:
+        gender = "male"
+        gender2 = "female"
+    else:
+        gender = "female"
+        gender2 = "male"
+    x["gender"] = x["gender"] % 2
+    y_predict_sample = pkl_model.predict(x)
+    if y_predict_sample[0]==0:
+        return jsonify({'result':"You have no disease as of now"})
+    else:
+        return jsonify({'result':"You have CardioVascular disease"})
 
 
 if __name__ == '__main__':
