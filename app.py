@@ -132,7 +132,7 @@ def cardio():
 
 @app.route('/kidney' , methods=['POST'])
 @cross_origin()
-def kideney():
+def kidney():
     data=request.get_json()
     
     pkl_model =joblib.load("kidney_disease.pkl")
