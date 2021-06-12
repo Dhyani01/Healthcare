@@ -126,9 +126,34 @@ def cardio():
     x["gender"] = x["gender"] % 2
     y_predict_sample = pkl_model.predict(x)
     if y_predict_sample[0]==0:
-        return jsonify({'result':"You have no disease as of now"})
+        return jsonify({'result':"You have no Cardiovascular disease as of now"})
     else:
         return jsonify({'result':"You have CardioVascular disease"})
+
+@app.route('/kidney' , methods=['POST'])
+@cross_origin()
+def kideney():
+    data=request.get_json()
+    
+    pkl_model =joblib.load("kidney_disease.pkl")
+    df = pd.DataFrame(data,index=[0])
+    print(df.head())
+    df[['htn','dm','cad','pe','ane']] = df[['htn','dm','cad','pe','ane']].replace(to_replace={'yes':1,'no':0})
+    df[['rbc','pc']] = df[['rbc','pc']].replace(to_replace={'abnormal':1,'normal':0})
+    df[['pcc','ba']] = df[['pcc','ba']].replace(to_replace={'present':1,'notpresent':0})
+    df[['appet']] = df[['appet']].replace(to_replace={'good':1,'poor':0,'no':np.nan})
+    # Further cleaning
+    df['pe'] = df['pe'].replace(to_replace='good',value=0) # Not having pedal edema is good
+    df['appet'] = df['appet'].replace(to_replace='no',value=0)
+    df['cad'] = df['cad'].replace(to_replace='\tno',value=0)
+    print(df.dtypes)
+    y_predict_sample = pkl_model.predict(df)
+
+    if int(y_predict_sample[0])==0:
+        return jsonify({'result':"You have no Kidney disease as of now"})
+    else:
+        return jsonify({'result':"You have Kidney disease"})
+
 
 
 if __name__ == '__main__':
