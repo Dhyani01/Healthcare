@@ -154,6 +154,33 @@ def kidney():
     else:
         return jsonify({'result':"You have Kidney disease"})
 
+@app.route('/liver' , methods=['POST'])
+@cross_origin()
+def liver():
+    data=request.get_json()
+    df = pd.DataFrame(data,index=[0])
+    pkl_model =joblib.load("liverdisease.pkl")
+    print(data)
+    print(df)
+    print(df["Gender"][0])
+    if df["Gender"][0]=="Male":
+        x=1
+    else:
+        x=0
+    dic={'Gen_Male':x}
+    df["Gen_Male"] = pd.Series(x)
+    df[df['Albumin_and_Globulin_Ratio'].isnull()]
+    df["Albumin_and_Globulin_Ratio"] = df.Albumin_and_Globulin_Ratio.fillna(df['Albumin_and_Globulin_Ratio'].mean())
+    finX = df[['Total_Protiens','Albumin','Gen_Male']]
+    y_predict_sample = pkl_model.predict(finX)
+    print(y_predict_sample)
+    print(df)
+
+    if int(y_predict_sample[0])==1:
+        return jsonify({'result':"You have no Liver disease as of now"})
+    else:
+        return jsonify({'result':"You have Liver disease"})
+
 
 
 if __name__ == '__main__':
