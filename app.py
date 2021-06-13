@@ -182,6 +182,40 @@ def liver():
         return jsonify({'result':"You have Liver disease"})
 
 
+@app.route('/stroke' , methods=['POST'])
+@cross_origin()
+def stroke():
+    data=request.get_json()
+    df = pd.DataFrame(data,index=[0])
+    df['gender'] = df['gender'].replace({'Male':0,'Female':1,'Other':-1}).astype(np.uint8)
+    df['work_type'] = df['work_type'].replace({'Private':0,'Self-employed':1,'Govt_job':2,'children':-1,'Never_worked':-2}).astype(np.uint8)
+    
+
+    pkl_model =joblib.load("stroke.pkl")
+    y_predict_sample = pkl_model.predict(df)
+    
+    if int(y_predict_sample[0])==0:
+        return jsonify({'result':"You have no Chances of Stroke as of now"})
+    else:
+        return jsonify({'result':"You might have stroke in near future please contact to your nearest Doctor "})
+
+
+
+@app.route('/back_pain' , methods=['POST'])
+@cross_origin()
+def back_pain():
+    data=request.get_json()
+    pkl_model =joblib.load("lower_back_pain.pkl")
+    df = pd.DataFrame(data,index=[0])
+    y_predict_sample = pkl_model.predict(df)
+    print(y_predict_sample)
+    if int(y_predict_sample[0])==0:
+        
+        return jsonify({'result':"You might have spine pain, please contact to your nearest Doctor "})
+    else:
+        return jsonify({'result':"You have no chances of getting spine pain as of now"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
