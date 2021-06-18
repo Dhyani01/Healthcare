@@ -6,12 +6,9 @@ Healthcare system that tracks your diseases and gives you insight reports along 
 Problem Statement: When it comes to health care, there is not very much awareness in our country. People don’t really take in account their past ailments or injuries, treatments and sometimes not even their allergies. This sometimes leads to serious health hazards even after seeking proper professional medical guidance. The doctors usually go through with the patient regarding their allergies and illnesses, but since that is based on the limited memorization capacity of the brain affected by trauma or anxiety due to the illness chances are some important information may be missed. 
 Not just this, people also sometimes ignore permanent symptoms that might be some serious disease and due to lack of information and loss of time the disease which was once curable might turn into a lifelong trauma.
 
-
 Methodology:
 
-Methodology.PNG
-
-
+![](https://github.com/Dhyani01/Healthcare/blob/main/Methodology.PNG)
 
 We plan on making a portal that will perform the following functions:
 Generates medical history reports based on entries by users regarding their previous illnesses, treatments, allergies and what medications do not suit them so that when needed by medical professionals can be used and proper help can be provided.
