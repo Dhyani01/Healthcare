@@ -21,6 +21,8 @@ import scipy.stats as stats
 import sklearn
 import os
 import joblib
+import requests_html
+from requests_html import HTMLSession
 
 
 file_path = os.path.abspath(os.getcwd())+"\database.db"
@@ -214,7 +216,33 @@ def back_pain():
         return jsonify({'result':"You might have spine pain, please contact to your nearest Doctor "})
     else:
         return jsonify({'result':"You have no chances of getting spine pain as of now"})
+    
+    
+    
+@app.route('/scraper' , methods=['POST'])
+@cross_origin()
+def scraper():
+    data=request.get_json()
+    session = HTMLSession()
+    temp="http://www.bing.com/search?q="+str(data["disease"])
+    url = temp
+    response = session.get(url)
+    results = response.html.xpath("//div[@class='b_cond_list']")
+    # print(type(results[0].text))
+    lis=results[0].text.split("\n")
+    # print(lis)
+    anurag=""
+    for i in range(len(lis)):
+        anurag=anurag+lis[i]
+        if i==len(lis)-1:
+            break
+        anurag=anurag+", "
 
+    if results:
+        
+        return jsonify({'result':"You might have "+str(anurag) +", please contact to your nearest Doctor "})
+    else:
+        return jsonify({'result':"You have no chances of Any Diesease as of now"})
 
 
 if __name__ == '__main__':
